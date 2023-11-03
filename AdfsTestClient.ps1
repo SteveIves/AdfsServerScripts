@@ -14,7 +14,6 @@ if (-not (IsAdmin)) {
 
 # Add active directory commands
 import-module ActiveDirectory
-cls
 
 & {
     $ok = $true
@@ -26,13 +25,34 @@ cls
     $clientLogoutUri = "https://adfstest.si.local"
     $adfsEndpoint = "https://sidc01.si.local/adfs/ls/"
 
-    if ($Mode.ToLower() -eq "add") {
+    if ($Mode.ToLower() -eq "add")
+    {
         AddTestClient
-    } elseif ($Mode.ToLower() -eq "remove") {
+    } elseif ($Mode.ToLower() -eq "remove")
+    {
         RemoveTestClient
     } else {
-        Write-Host "Parameter 1 must be add or remove" -ForegroundColor Red    
-        $ok = $false
+        Write-Host "Parameter 1 should be 'add' or 'remove'"
+        do {
+            $option = Read-Host "(A)dd, (R)emove or (Q)uit? "
+
+            switch ($option.ToLower()) {
+                'a' {
+                    AddTestClient
+                    exit
+                }
+                'r' {
+                    RemoveTestClient
+                    exit
+                }
+                'q' {
+                    exit
+                }
+                default {
+                    Write-Host "Invalid choice, try again!"
+                }
+            }
+        } while ($true)
     }
 
     if ($ok -eq $true) {
